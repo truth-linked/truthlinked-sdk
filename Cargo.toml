@@ -1,11 +1,11 @@
 [package]
 name = "truthlinked-sdk"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Truthlinked <support@truthlinked.org>"]
 description = "Official Rust SDK for Truthlinked Authority Fabric - Zero-trust authorization system"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/truthlinked/sdk"
+repository = "https://github.com/truth-linked/truthlinked-sdk"
 homepage = "https://truthlinked.org"
 documentation = "https://docs.rs/truthlinked-sdk"
 readme = "README.md"
