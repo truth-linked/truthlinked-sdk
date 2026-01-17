@@ -28,7 +28,5 @@ jobs:
         run: cargo test --all-features
       
       - name: Publish to crates.io
-        uses: katyo/publish-crates@v2
-        with:
-          args: --allow-dirty
+        run: cargo publish --allow-dirty
 
