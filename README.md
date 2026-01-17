@@ -275,7 +275,7 @@ let health = client.health().await.unwrap();  // Can panic!
 
 - **Documentation**: https://docs.truthlinked.org
 - **API Reference**: https://docs.rs/truthlinked-sdk
-- **Issues**: https://github.com/truthlinked/sdk/issues
+- **Issues**: https://github.com/truth-linked/truthlinked-sdk/issues
 - **Email**: support@truthlinked.org
 
 ## License
