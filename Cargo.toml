@@ -1,0 +1,64 @@
+[package]
+name = "truthlinked-sdk"
+version = "0.1.1"
+edition = "2021"
+authors = ["Truthlinked <support@truthlinked.org>"]
+description = "Official Rust SDK for Truthlinked Authority Fabric - Zero-trust authorization system"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/truthlinked/sdk"
+homepage = "https://truthlinked.org"
+documentation = "https://docs.rs/truthlinked-sdk"
+readme = "README.md"
+keywords = ["security", "authorization", "zero-trust", "iam", "authentication"]
+categories = ["authentication", "cryptography", "api-bindings"]
+
+[dependencies]
+# HTTP client - minimal, audited dependencies only
+reqwest = { version = "0.11", default-features = false, features = ["rustls-tls", "json"] }
+
+# Serialization - industry standard
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+thiserror = "1.0"
+
+# Security - memory protection
+zeroize = { version = "1.0", features = ["derive"] }
+
+# Async runtime
+tokio = { version = "1.0", features = ["time"] }
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Hex encoding
+hex = "0.4"
+
+# HMAC for request signing
+hmac = "0.12"
+sha2 = "0.10"
+
+# Base64 encoding
+base64 = "0.21"
+
+# Logging
+tracing = "0.1"
+
+# Random for jitter
+rand = "0.8"
+
+# Tracing for examples
+tracing-subscriber = { version = "0.3", optional = true }
+
+[dev-dependencies]
+tokio = { version = "1.0", features = ["full"] }
+mockito = "1.0"
+tracing-subscriber = "0.3"
+tokio-test = "0.4"
+
+[features]
+default = ["rustls-tls"]
+rustls-tls = []
+
+# Explicitly NO native-tls to avoid OpenSSL vulnerabilities
