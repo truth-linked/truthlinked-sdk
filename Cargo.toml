@@ -11,6 +11,7 @@ documentation = "https://docs.rs/truthlinked-sdk"
 readme = "README.md"
 keywords = ["security", "authorization", "zero-trust", "iam", "authentication"]
 categories = ["authentication", "cryptography", "api-bindings"]
+exclude = ["typescript/"]
 
 [dependencies]
 # HTTP client - minimal, audited dependencies only
