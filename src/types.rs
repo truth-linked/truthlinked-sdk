@@ -104,3 +104,54 @@ pub struct UsageResponse {
     pub percentage: f32,
     pub days_remaining: i64,
 }
+
+/// Witness submission
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct WitnessSubmission {
+    #[serde(rename = "afEventHash")]
+    pub af_event_hash: String,
+    #[serde(rename = "afMerkleRoot")]
+    pub af_merkle_root: String,
+    #[serde(rename = "afSequence")]
+    pub af_sequence: u64,
+    #[serde(rename = "afInstanceId")]
+    pub af_instance_id: String,
+    #[serde(rename = "oracleTime")]
+    pub oracle_time: u64,
+    #[serde(rename = "afSignature")]
+    pub af_signature: String,
+}
+
+/// Witness event
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct WitnessEvent {
+    pub sequence: u64,
+    pub timestamp: u64,
+    pub submission: WitnessSubmission,
+    #[serde(rename = "prevHash")]
+    pub prev_hash: String,
+    #[serde(rename = "eventHash")]
+    pub event_hash: String,
+    pub proof: Option<String>,
+}
+
+/// Signed tree head
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SignedTreeHead {
+    #[serde(rename = "treeSize")]
+    pub tree_size: u64,
+    pub timestamp: u64,
+    #[serde(rename = "rootHash")]
+    pub root_hash: String,
+    pub signature: String,
+    #[serde(rename = "keyVersion")]
+    pub key_version: u32,
+}
+
+/// Witness health response
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct WitnessHealthResponse {
+    pub status: String,
+    #[serde(rename = "chainSize")]
+    pub chain_size: u64,
+}

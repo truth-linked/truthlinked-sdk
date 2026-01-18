@@ -428,18 +428,100 @@ impl Client {
             _ => Err(TruthlinkedError::InvalidResponse),
         }
     }
-}
 
-impl std::fmt::Debug for Client {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Client")
-            .field("base_url", &self.base_url)
-            .field("license_key", &self.license_key.redacted())
-            .finish()
+    // ========== Witness Chain Methods ==========
+
+    /// Submit event to witness chain
+    pub async fn submit_witness(&self, submission: WitnessSubmission) -> Result<WitnessEvent> {
+        let url = format!("{}/witness/submit", self.base_url);
+        
+        let response = self.http_client
+            .post(&url)
+            .header("Authorization", format!("Bearer {}", self.license_key.as_str()))
+            .json(&serde_json::json!({ "submission": submission }))
+            .send()
+            .await?;
+        
+        self.handle_response(response).await
     }
-}
 
-impl Client {
+    /// Get witness event by sequence number
+    pub async fn get_witness_event(&self, sequence: u64, include_proof: bool) -> Result<WitnessEvent> {
+        let url = format!("{}/witness/event/{}", self.base_url, sequence);
+        
+        let response = self.http_client
+            .get(&url)
+            .header("Authorization", format!("Bearer {}", self.license_key.as_str()))
+            .query(&[("include_proof", include_proof.to_string())])
+            .send()
+            .await?;
+        
+        self.handle_response(response).await
+    }
+
+    /// Get latest signed tree head
+    pub async fn get_latest_sth(&self) -> Result<SignedTreeHead> {
+        let url = format!("{}/witness/sth/latest", self.base_url);
+        
+        let response = self.http_client
+            .get(&url)
+            .header("Authorization", format!("Bearer {}", self.license_key.as_str()))
+            .send()
+            .await?;
+        
+        self.handle_response(response).await
+    }
+
+    /// Get signed tree head at specific tree size
+    pub async fn get_sth(&self, tree_size: u64) -> Result<SignedTreeHead> {
+        let url = format!("{}/witness/sth/{}", self.base_url, tree_size);
+        
+        let response = self.http_client
+            .get(&url)
+            .header("Authorization", format!("Bearer {}", self.license_key.as_str()))
+            .send()
+            .await?;
+        
+        self.handle_response(response).await
+    }
+
+    /// Export witness chain segment
+    pub async fn export_witness_chain(&self, start_seq: Option<u64>, end_seq: Option<u64>) -> Result<Vec<u8>> {
+        let url = format!("{}/witness/export", self.base_url);
+        
+        let mut request = self.http_client
+            .get(&url)
+            .header("Authorization", format!("Bearer {}", self.license_key.as_str()));
+
+        if let Some(start) = start_seq {
+            request = request.query(&[("start_seq", start.to_string())]);
+        }
+        if let Some(end) = end_seq {
+            request = request.query(&[("end_seq", end.to_string())]);
+        }
+
+        let response = request.send().await?;
+        
+        if !response.status().is_success() {
+            return self.handle_error_status(response.status());
+        }
+
+        Ok(response.bytes().await?.to_vec())
+    }
+
+    /// Check witness chain health
+    pub async fn witness_health(&self) -> Result<WitnessHealthResponse> {
+        let url = format!("{}/witness/health", self.base_url);
+        
+        let response = self.http_client
+            .get(&url)
+            .header("Authorization", format!("Bearer {}", self.license_key.as_str()))
+            .send()
+            .await?;
+        
+        self.handle_response(response).await
+    }
+
     /// Handle HTTP error status codes
     fn handle_error_status<T>(&self, status: StatusCode) -> Result<T> {
         match status {
@@ -454,5 +536,14 @@ impl Client {
             _ if status.is_server_error() => Err(TruthlinkedError::ServerError),
             _ => Err(TruthlinkedError::InvalidResponse),
         }
+    }
+}
+
+impl std::fmt::Debug for Client {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Client")
+            .field("base_url", &self.base_url)
+            .field("license_key", &self.license_key.redacted())
+            .finish()
     }
 }
